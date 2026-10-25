@@ -75,7 +75,8 @@ plt.plot(x_dense, true_signal(x_dense), color='black', linestyle='--', alpha=0.7
 plt.scatter(x_raw, y_nonuniform.real, color='red', alpha=0.6, edgecolors='none', s=40, label='Nonuniform Samples')
 
 # Plot 3: Corrected Least-squares inversion result
-plt.plot(x_uniform, u_spatial_grid.real, color='teal', linewidth=2.5, label='Perfectly Matched Inversion Grid')
+#plt.plot(x_uniform, u_spatial_grid.real, color='teal', linewidth=2.5, label='Perfectly Matched Inversion Grid')
+plt.scatter(x_uniform, u_spatial_grid.real, color='teal', alpha=0.6, edgecolors='none', marker='x', s=40, label='Perfectly Matched Inversion Grid')
 
 combined_data = np.column_stack((x_uniform,  u_spatial_grid.real))
 
