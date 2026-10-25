@@ -123,6 +123,9 @@ y_test = true_signal(x_uniform)
 mae = np.mean(np.abs(u_spatial_grid.real -  y_test))
 print(f"Mean Absolute Deviation: {mae}")
 
+mae1 = np.mean(np.abs(u_spatial_grid.real[100:-100] -  y_test[100:-100]))
+print(f"Mean Absolute Deviation: {mae1}")
+
 combined_data = np.column_stack((x_uniform,  u_spatial_grid.real, y_test,
                                  u_spatial_grid.real -  y_test))
 
