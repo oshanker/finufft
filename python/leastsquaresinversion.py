@@ -87,16 +87,17 @@ iters = lsqr_results[2]
 # =====================================================================
 # Generate regular target coordinates within the user defined range
 
-umin = xmin       # Start of your time/spatial axis (can be negative or positive)
+umin = xmin+0.125       # Start of your time/spatial axis (can be negative or positive)
 umax = xmax       # End of your time/spatial axis
 u_domain_length = umax - umin
 
 print(f" umin {umin} {true_signal(umin)} ")
 
 x_uniform = np.linspace(umin, umax, N_grid, endpoint=False)
+print(f" x_uniform[1] {x_uniform[1]} {true_signal(x_uniform[1])} ")
 
 # Scale uniform targets exactly like the source coordinates into [-pi, pi]
-x_uniform_scaled = ((x_uniform - umin) / u_domain_length) * 2.0 * np.pi - np.pi
+x_uniform_scaled = ((x_uniform - xmin) / domain_length) * 2.0 * np.pi - np.pi
 
 # Map optimized Fourier coefficients directly to the uniform spatial targets
 u_spatial_grid = finufft.nufft1d2(x_uniform_scaled, modes_reconstructed)
