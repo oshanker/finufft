@@ -17,6 +17,8 @@ t_real = np.linspace(t_min, t_max, n_points)
 #print(f"dt {dt}")
 values_irregular = np.sin(0.05 * t_real) + 0.2 * np.sin(0.1 * t_real)
 
+print(f"t_real[0] {t_real[0]} {np.sin(0.05 * t_real[0])+ 0.2 *np.sin(0.1 * t_real[0])}")
+
 # 3. Combine them into two parallel columns
 combined_data = np.column_stack((t_real, values_irregular))
 
@@ -40,8 +42,9 @@ padded_duration = t_end - t_start
 t_scaled = -np.pi + 2 * np.pi * (t_real - t_start) / padded_duration
 
 # 5. Run the Type 1 NUFFT
-fourier_modes = finufft.nufft1d1(t_scaled, values_irregular.astype(np.complex128), uniform_grid_size,
-                                 isign=1, eps=1e-9)
+fourier_modes = finufft.nufft1d1(t_scaled, values_irregular.astype(np.complex128)
+                                 , uniform_grid_size,
+                            isign=1, eps=1e-9)
 
 
 # . Rescale real timestamps to the [-pi, pi] window
