@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 # =====================================================================
 # 1. PARAMETERS: Define your time axis range and grid size here
 # =====================================================================
-xmin = -5.0       # Start of your time/spatial axis (can be negative or positive)
-xmax = 15.0       # End of your time/spatial axis
+xmin = 0.0       # Start of your time/spatial axis (can be negative or positive)
+xmax = 150.125       # End of your time/spatial axis
 domain_length = xmax - xmin
 
 M = 2500           # Number of irregular, nonuniform data points
@@ -15,7 +15,7 @@ N_grid = 1500      # Number of regular uniform output points / Fourier modes
 
 np.random.seed(101)
 
-variation_scale = 1
+variation_scale = 10
 # Define an underlying test curve relative to the chosen domain
 def true_signal(x):
     # Scales frequencies dynamically based on your chosen domain length
@@ -75,8 +75,9 @@ A = LinearOperator(
 # =====================================================================
 # damp=1e-2 acts as an L2 penalty to suppress wild, unstable high-frequency modes
 # which naturally occur when N_grid >= M with nonuniform spacing.
-lsqr_results = lsqr(A, y_nonuniform, atol=1e-10, btol=1e-10, damp=4e-2,
-                    iter_lim=200)
+iters = 5000
+lsqr_results = lsqr(A, y_nonuniform, atol=1e-10, btol=1e-10, damp=1.0e-1,
+                    iter_lim=iters)
 
 
 modes_reconstructed = lsqr_results[0]
@@ -118,7 +119,12 @@ plt.scatter(x_raw, y_nonuniform.real, color='red', alpha=0.6, edgecolors='none',
 plt.scatter(x_uniform, u_spatial_grid.real, color='teal', marker='+',
          linewidth=2.5, label='Regularized Inversion Grid')
 
-combined_data = np.column_stack((x_uniform,  u_spatial_grid.real))
+y_test = true_signal(x_uniform)
+mae = np.mean(np.abs(u_spatial_grid.real -  y_test))
+print(f"Mean Absolute Deviation: {mae}")
+
+combined_data = np.column_stack((x_uniform,  u_spatial_grid.real, y_test,
+                                 u_spatial_grid.real -  y_test))
 
 # 3. Save to a text file
 np.savetxt(
