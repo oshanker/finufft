@@ -5,9 +5,13 @@ Here is the step-by-step summary of the approach that successfully resolved the 
 1. Formulating the Inverse Problem
 
 Instead of trying to interpolate the irregular points directly, we treated the Nonuniform FFT (NUFFT) as a forward linear system matrix equation:
+
 \(\mathbf{Ac}=\mathbf{y}\)
+
 • \(\mathbf{y}\): Your known, irregularly spaced data samples.
+
 • \(\mathbf{A}\): The Type 2 NUFFT operator, which acts as a matrix mapping uniform Fourier frequencies to irregular spatial locations.
+
 • \(\mathbf{c}\): The unknown underlying Fourier modes we need to find.
 
 2. Setting Up Exact Mathematical Duality
