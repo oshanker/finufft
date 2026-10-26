@@ -10,9 +10,14 @@ X_uniform = np.linspace(x_start, x_end, N, endpoint=ENDPOINT)
 
 # Generate 1,000 evenly spaced points over the specified range
 x = np.linspace(x_start + gincr/3, x_end - gincr/3, 180000)
+def true_signal(x):
+    # Scales frequencies dynamically based on your chosen domain length
+    return np.cos(np.pi * (x - x_start) / gincr)
+
+
 
 # Evaluate your exact formula: cos(pi * (x - x_start) / T)
-y = np.cos(np.pi * (x - x_start) / gincr)
+y = true_signal(x)
 
 
 combined_data = np.column_stack((x, y))
