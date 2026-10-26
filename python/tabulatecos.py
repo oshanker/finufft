@@ -45,7 +45,7 @@ combined_data = np.column_stack((X_uniform, ytest))
 np.savetxt(
     "../out/test_output.csv", 
     combined_data, 
-    fmt= "%.6f",  # 4 decimals for Time, 6 decimals for Value
+    fmt= "%.18e",  # 4 decimals for Time, 6 decimals for Value
     header="x,c", 
     delimiter=",",
     comments=""            )
