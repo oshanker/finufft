@@ -98,6 +98,18 @@ except ImportError:
 
 # Save
 out = np.column_stack((X_uniform, u_uniform))
+
+def mad(u_uniform):
+    path =   "../out/test_output.csv"
+
+    _, y_test = load_csv(path)
+    mae = np.mean(np.abs(u_uniform -  y_test))
+
+    print(f"First 3 rows:")
+    print(y_test[:3])
+    print(f"Mean Absolute Deviation: {mae}")
+    
+mad(u_uniform)
 np.savetxt(OUTPUT_CSV, out, delimiter=',', header='x_uniform,c_uniform',
            fmt= "%.6f", comments='')
 print(f"Saved {N} points to {OUTPUT_CSV}")
@@ -108,3 +120,6 @@ print(f"Last 3 rows:")
 print(out[-3:])
 print(f"c range: min={u_uniform.min():.6f} max={u_uniform.max():.6f} \
       (should be ~[{expected_min:.6f},{expected_max:.6f}] for your data)")
+
+
+
