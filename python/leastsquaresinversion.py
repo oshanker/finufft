@@ -10,17 +10,17 @@ xmin = 0.0       # Start of your time/spatial axis (can be negative or positive)
 xmax = 150.125       # End of your time/spatial axis
 domain_length = xmax - xmin
 
-M = 2500           # Number of irregular, nonuniform data points
-N_grid = 1500      # Number of regular uniform output points / Fourier modes
+M = 250000           # Number of irregular, nonuniform data points
+N_grid = 150000      # Number of regular uniform output points / Fourier modes
 
 np.random.seed(101)
 
-variation_scale = 10
+variation_scale = 1.0
 # Define an underlying test curve relative to the chosen domain
 def true_signal(x):
     # Scales frequencies dynamically based on your chosen domain length
-    return np.sin(2 * np.pi * 3 * (x) / variation_scale) + \
-           0.5 * np.cos(2 * np.pi * 6 * (x) / variation_scale)
+    return np.sin( 3 * (x) / variation_scale) + \
+           0.5 * np.cos( 6 * (x) / variation_scale)
 
 
 # =====================================================================
@@ -76,7 +76,7 @@ A = LinearOperator(
 # damp=1e-2 acts as an L2 penalty to suppress wild, unstable high-frequency modes
 # which naturally occur when N_grid >= M with nonuniform spacing.
 iters = 5000
-lsqr_results = lsqr(A, y_nonuniform, atol=1e-10, btol=1e-10, damp=1.0e-1,
+lsqr_results = lsqr(A, y_nonuniform, atol=1e-15, btol=1e-15, damp=1.0e-5,
                     iter_lim=iters)
 
 
@@ -103,22 +103,6 @@ x_uniform_scaled = ((x_uniform - xmin) / domain_length) * 2.0 * np.pi - np.pi
 # Map optimized Fourier coefficients directly to the uniform spatial targets
 u_spatial_grid = finufft.nufft1d2(x_uniform_scaled, modes_reconstructed)
 
-# =====================================================================
-# 7. PLOT AND VERIFY THE PARAMETERIZED BOUNDS
-# =====================================================================
-plt.figure(figsize=(10, 5))
-
-# Plot high-density true underlying signal for reference
-x_dense = np.linspace(xmin, xmax, 500)
-plt.plot(x_dense, true_signal(x_dense), color='black', linestyle='--', alpha=0.7, label='True Underlying Curve')
-
-# Plot original sparse inputs
-plt.scatter(x_raw, y_nonuniform.real, color='red', alpha=0.6, edgecolors='none', s=40, label='Nonuniform Samples')
-
-# Plot the perfectly reconstructed regular grid
-plt.scatter(x_uniform, u_spatial_grid.real, color='teal', marker='+',
-         linewidth=2.5, label='Regularized Inversion Grid')
-
 y_test = true_signal(x_uniform)
 mae = np.mean(np.abs(u_spatial_grid.real -  y_test))
 print(f"Mean Absolute Deviation: {mae}")
@@ -137,6 +121,18 @@ np.savetxt(
     header="Time\tValue", # Column names at the top
     delimiter="\t"     # Separated by tabs
 )
+
+
+plt.figure(figsize=(10, 5))
+
+x_dense = np.linspace(xmin, xmax, 500)
+plt.plot(x_dense, true_signal(x_dense), color='black', linestyle='--', alpha=0.7, label='True Underlying Curve')
+
+plt.scatter(x_raw, y_nonuniform.real, color='red', alpha=0.6, edgecolors='none', s=40, label='Nonuniform Samples')
+
+plt.scatter(x_uniform, u_spatial_grid.real, color='teal', marker='+',
+         linewidth=2.5, label='Regularized Inversion Grid')
+
 
 
 plt.title(f"Parameterized NUFFT Inversion on Bound [{xmin}, {xmax}] ({iters} Iters)")
