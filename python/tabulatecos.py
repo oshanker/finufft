@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 gincr = 0.2435990469039924426798
 x_start = 243.53396107975615984
 x_end = x_start + 60000 * gincr
+N = 120000
+X_uniform = np.linspace(x_start, x_end, N, endpoint=ENDPOINT)
 
 # Generate 1,000 evenly spaced points over the specified range
 x = np.linspace(x_start + gincr/3, x_end - gincr/3, 180000)
