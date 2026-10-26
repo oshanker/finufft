@@ -99,7 +99,7 @@ except ImportError:
 # Save
 out = np.column_stack((X_uniform, u_uniform))
 np.savetxt(OUTPUT_CSV, out, delimiter=',', header='x_uniform,c_uniform',
-           comments='')
+           fmt= "%.6f", comments='')
 print(f"Saved {N} points to {OUTPUT_CSV}")
 print(f"dx = {L/N if not ENDPOINT else L/(N-1):.12f}")
 print(f"First 3 rows:")
