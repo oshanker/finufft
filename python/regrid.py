@@ -107,6 +107,8 @@ def mad(u_uniform):
 
     print(f"First 3 rows:")
     print(y_test[:3])
+    print(f"Last 3 rows:")
+    print(y_test[-3:])
     print(f"Mean Absolute Deviation: {mae}")
     
 mad(u_uniform)
