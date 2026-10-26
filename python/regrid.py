@@ -45,6 +45,9 @@ idx_sort = np.argsort(x_phys)
 x_phys = x_phys[idx_sort]
 c_real = c_real[idx_sort]
 print(f"Filtered & sorted M={len(x_phys)}")
+expected_min = c_real.min()
+expected_max = c_real.max()
+
 
 # --- Try FINUFFT path ---
 try:
@@ -88,17 +91,20 @@ except ImportError:
     print("FINUFFT not installed, falling back to cubic interpolation (scipy)...")
     print("To use FINUFFT locally: pip install finufft")
     from scipy.interpolate import interp1d
-    f_interp = interp1d(x_phys, c_real, kind='cubic', bounds_error=False, fill_value='extrapolate')
+    f_interp = interp1d(x_phys, c_real, kind='cubic', bounds_error=False,
+                        fill_value='extrapolate')
     X_uniform = np.linspace(X_MIN, X_MAX, N, endpoint=ENDPOINT)
     u_uniform = f_interp(X_uniform)
 
 # Save
 out = np.column_stack((X_uniform, u_uniform))
-np.savetxt(OUTPUT_CSV, out, delimiter=',', header='x_uniform,c_uniform', comments='')
+np.savetxt(OUTPUT_CSV, out, delimiter=',', header='x_uniform,c_uniform',
+           comments='')
 print(f"Saved {N} points to {OUTPUT_CSV}")
 print(f"dx = {L/N if not ENDPOINT else L/(N-1):.12f}")
 print(f"First 3 rows:")
 print(out[:3])
 print(f"Last 3 rows:")
 print(out[-3:])
-print(f"c range: min={u_uniform.min():.6f} max={u_uniform.max():.6f} (should be ~[-1,1] for your data)")
+print(f"c range: min={u_uniform.min():.6f} max={u_uniform.max():.6f} \
+      (should be ~[{expected_min:.6f},{expected_max:.6f}] for your data)")
