@@ -14,7 +14,9 @@ X_uniform = np.linspace(x_start, x_end, N, endpoint=ENDPOINT)
 x = np.linspace(x_start + gincr/3, x_end - gincr/3, 170000)
 def true_signal(x):
     # Scales frequencies dynamically based on your chosen domain length
-    return np.cos(np.pi * (x - x_start) / gincr)
+    ret = np.cos(np.pi * (x - x_start) / gincr) + \
+           np.cos(np.pi * (x - x_start) / (2*gincr))
+    return ret
 
 
 
