@@ -103,12 +103,12 @@ def mad(u_uniform):
     path =   "../out/test_output.csv"
 
     _, y_test = load_csv(path)
-    mae = np.mean(np.abs(u_uniform -  y_test))
+    mae = np.mean(np.abs(u_uniform -  y_test[:u_uniform.size]))
 
     print(f"First 3 rows:")
     print(y_test[:3])
     print(f"Last 3 rows:")
-    print(y_test[-3:])
+    print(y_test[u_uniform.size-3:u_uniform.size])
     print(f"Mean Absolute Deviation: {mae}")
     
 mad(u_uniform)
