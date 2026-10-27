@@ -52,8 +52,15 @@ c_real = c_real[idx]
 print(f"M={len(x_phys)} x=[{x_phys[0]:.2f},{x_phys[-1]:.2f}] c=[{c_real.min():.2f},{c_real.max():.2f}]")
 
 # Detect isolated spike clusters
+#is_spike: The resulting array. If an element in c_real is greater
+# than the threshold, its corresponding
+#position in is_spike will be True. Otherwise, it will be False.
 is_spike = np.abs(c_real) > SPIKE_THRESHOLD
+# spike_indices: The final output. It is an array of integers
+# showing the exact indices where the signal crossed your threshold.
+
 spike_indices = np.where(is_spike)[0]
+print(f"spike_indices {spike_indices[:3]} ...")
 clusters = []
 if len(spike_indices) > 0:
     cur = [spike_indices[0]]
@@ -150,8 +157,13 @@ for xs, cs in zip(x_phys, c_real):
         if 0 <= b < N and abs(cs) > abs(u_final[b]):
             u_final[b] = cs
 
-print(f"Final: min={u_final.min():.2f} max={u_final.max():.2f} spikes={(np.abs(u_final)>SPIKE_THRESHOLD).sum()}")
-np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_final)),
+print(f"Final: min={u_final.min():.2f} max={u_final.max():.2f} \
+      spikes={(np.abs(u_final)>SPIKE_THRESHOLD).sum()}")
+np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_final)), \
            fmt="%.6f", delimiter=',', header='x_uniform,c_uniform', comments='')
 print(f"Saved {OUTPUT_CSV}")
-np.savetxt(OUTPUT_CSV.replace("hybrid", "background_only"), np.column_stack((X_uniform, u_bg)), delimiter=',', header='x_uniform,c_uniform', comments='')
+print(f"background_only: bg min={u_bg.min():.2f} bg max={u_bg.max():.2f} \
+      spikes={(np.abs(u_bg)>SPIKE_THRESHOLD).sum()}")
+np.savetxt(OUTPUT_CSV.replace("hybrid", "background_only"), \
+           np.column_stack((X_uniform, u_bg)), delimiter=',', \
+           header='x_uniform,c_uniform', comments='')
