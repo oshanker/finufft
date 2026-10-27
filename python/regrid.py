@@ -15,10 +15,10 @@ import sys
 
 INPUT_CSV = "../out/input.csv"  # or "input.csv" locally
 OUTPUT_CSV = "../out/uniform_120k.csv"
-X_MIN = 243.53396107975615984
-X_MAX = 14859.4767721
-L = X_MAX - X_MIN  # 14615.942811020244
 N = 120000
+X_MIN = 243.53396107975615984
+X_MAX = X_MIN + N* 0.121799523425 #14859.4767721
+L = X_MAX - X_MIN  # 14615.942811020244
 EPS = 1e-9
 USE_DENSITY_WEIGHTS = True
 ENDPOINT = False  # False = standard FFT grid, True = include X_MAX exactly
