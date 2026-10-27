@@ -26,8 +26,8 @@ X_MAX = 14859.4767721
 L = X_MAX - X_MIN
 N = 120000
 EPS = 1e-9
-SPIKE_THRESHOLD = 20.0
-SPIKE_BUFFER_POINTS = 8
+SPIKE_THRESHOLD = 15.0
+SPIKE_BUFFER_POINTS = 1
 USE_FINUFFT = True  # True = try FINUFFT for background (falls back to Akima if not installed)
 
 def load_csv_smart(path):
