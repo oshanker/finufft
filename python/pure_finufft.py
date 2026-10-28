@@ -53,7 +53,7 @@ print(f"Original: M={len(x_phys)} x=[{x_phys[0]:.2f},{x_phys[-1]:.2f}] c=[{c_rea
 
 # --- Drop extreme values (no fixed threshold) ---
 if EXTREME_METHOD == "iqr":
-    q1, q3 = np.percentile(c_real, [1, 99])
+    q1, q3 = np.percentile(c_real, [0.9, 99.1])
     iqr = q3 - q1
     lo = q1 - IQR_FACTOR * iqr
     hi = q3 + IQR_FACTOR * iqr
