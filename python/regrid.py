@@ -13,7 +13,7 @@ Fixes the 14k bug: correct normalization is N/(2pi) * ifft, with density weights
 import numpy as np
 import sys
 
-INPUT_CSV = "../out/input.csv"  # or "input.csv" locally
+INPUT_CSV = "../out/6KE12posmax.csv"
 OUTPUT_CSV = "../out/uniform_120k.csv"
 N = 120000
 X_MIN = 243.53396107975615984
@@ -22,6 +22,21 @@ L = X_MAX - X_MIN  # 14615.942811020244
 EPS = 1e-9
 USE_DENSITY_WEIGHTS = True
 ENDPOINT = False  # False = standard FFT grid, True = include X_MAX exactly
+
+def load_csv_smart(path):
+    try:
+        data = np.loadtxt(path, delimiter=',', skiprows=1)
+    except:
+        data = np.loadtxt(path, delimiter=',')
+    if data.shape[1] == 2:
+        x, c = data[:,0], data[:,1]
+    elif data.shape[1] >= 3:
+        x, c = data[:,1], data[:,2]
+        print(f"3-col file detected, using col1=x, col2=c")
+    else:
+        print(f"ERROR: Need at least 2 cols")
+        sys.exit(1)
+    return x, c
 
 def load_csv(path):
     try:
@@ -34,16 +49,11 @@ def load_csv(path):
     return data[:,0], data[:,1]
 
 print(f"Loading {INPUT_CSV}...")
-x_phys, c_real = load_csv(INPUT_CSV)
+x_phys, c_real = load_csv_smart(INPUT_CSV)
 print(f"Original M={len(x_phys)} x=[{x_phys.min()}, {x_phys.max()}]")
 
 # Filter to declared range and sort
-mask = (x_phys >= X_MIN-1e-6) & (x_phys <= X_MAX+1e-6)
-x_phys = x_phys[mask]
-c_real = c_real[mask]
-idx_sort = np.argsort(x_phys)
-x_phys = x_phys[idx_sort]
-c_real = c_real[idx_sort]
+
 print(f"Filtered & sorted M={len(x_phys)}")
 expected_min = c_real.min()
 expected_max = c_real.max()
