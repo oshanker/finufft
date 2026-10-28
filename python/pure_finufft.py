@@ -114,7 +114,9 @@ f_fft = np.fft.ifftshift(f_centered)
 u_uniform = (np.fft.ifft(f_fft) * N / (2*np.pi)).real
 
 print(f"FINUFFT done: u min max=[{u_uniform.min():.3f},{u_uniform.max():.3f}] \
-        spikes={(np.abs(u_uniform)>SPIKE_THRESHOLD).sum()}" \
+        spikes={(np.abs(u_uniform)>SPIKE_THRESHOLD).sum()} \
+        mean={u_uniform.mean():.3f} \
+  std= {u_uniform.std():.3f}" \
       )
 
 # Save
