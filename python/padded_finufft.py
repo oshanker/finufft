@@ -31,7 +31,7 @@ X_MIN = X_MIN_ORIG
 X_MAX = X_MAX_ORIG
 L = X_MAX - X_MIN  # = N * DX_FIXED = 14615.94
 
-PAD_INTERVALS = 0  # 10 intervals each side, padded with zeros
+PAD_INTERVALS = 1  # 10 intervals each side, padded with zeros
 EPS = 1e-9
 EXTREME_METHOD = "iqr"
 IQR_FACTOR = 3.0
@@ -133,5 +133,7 @@ np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_interior)), \
 
 print(f"First 3 rows:")
 print(u_interior[:3])
+print(f"Last 3 rows:")
+print(u_interior[-3:])
 print(f"Saved interior: {OUTPUT_CSV} N={N} dx={DX:.12f}")
 print(f"Check: X_MAX - X_MIN = {X_MAX-X_MIN:.6f} = {N} * {DX:.6f}")
