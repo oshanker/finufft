@@ -19,10 +19,11 @@ X_MAX = 14859.4767721
 L = X_MAX - X_MIN
 N = 120000
 EPS = 1e-9
+SPIKE_THRESHOLD = 50.0
 
 # How to drop extremes - statistical, no fixed SPIKE_THRESHOLD
 # Options: "iqr", "zscore", "percentile"
-EXTREME_METHOD = "iqr"  # iqr is most robust for your data with spikes
+EXTREME_METHOD = "value"  # iqr is most robust for your data with spikes
 IQR_FACTOR = 0.5  # drop points outside Q1 - 3*IQR, Q3 + 3*IQR
 
 ZSCORE_THRESH = 4.0
@@ -49,7 +50,9 @@ x_phys, c_real = load_csv_smart(INPUT_CSV)
 idx = np.argsort(x_phys)
 x_phys = x_phys[idx]
 c_real = c_real[idx]
-print(f"Original: M={len(x_phys)} x=[{x_phys[0]:.2f},{x_phys[-1]:.2f}] c=[{c_real.min():.2f},{c_real.max():.2f}] mean={c_real.mean():.3f} std={c_real.std():.3f}")
+print(f"Original: M={len(x_phys)} x=[{x_phys[0]:.2f},{x_phys[-1]:.2f}] \
+  c min max =[{c_real.min():.2f},{c_real.max():.2f}] mean={c_real.mean():.3f} \
+  std= {c_real.std():.3f}")
 
 # --- Drop extreme values (no fixed threshold) ---
 if EXTREME_METHOD == "iqr":
@@ -69,6 +72,10 @@ elif EXTREME_METHOD == "percentile":
     lo, hi = np.percentile(c_real, [PERCENTILE_LOW, PERCENTILE_HIGH])
     mask = (c_real >= lo) & (c_real <= hi)
     print(f"Percentile method: keep [{PERCENTILE_LOW}%, {PERCENTILE_HIGH}%] = [{lo:.3f},{hi:.3f}]")
+elif EXTREME_METHOD == "value":
+    lo, hi = -SPIKE_THRESHOLD, SPIKE_THRESHOLD
+    mask = (c_real >= lo) & (c_real <= hi)
+    print(f"value method: keep [LOW, HIGH] = [{lo:.3f},{hi:.3f}]")
 else:
     mask = np.ones(len(c_real), dtype=bool)
 
@@ -105,7 +112,6 @@ f_centered = finufft.nufft1d1(x_scaled.astype(np.float64), c_weighted, n_modes=N
 # Plain inverse: c(X) = N/(2pi) * ifft(f)  [correct normalization, no Tukey]
 f_fft = np.fft.ifftshift(f_centered)
 u_uniform = (np.fft.ifft(f_fft) * N / (2*np.pi)).real
-SPIKE_THRESHOLD = 15.0
 
 print(f"FINUFFT done: u min max=[{u_uniform.min():.3f},{u_uniform.max():.3f}] \
         spikes={(np.abs(u_uniform)>SPIKE_THRESHOLD).sum()}" \
