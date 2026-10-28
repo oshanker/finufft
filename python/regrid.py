@@ -13,7 +13,9 @@ Fixes the 14k bug: correct normalization is N/(2pi) * ifft, with density weights
 import numpy as np
 import sys
 
-INPUT_CSV = "../out/6KE12posmax.csv"
+INPUT_CSV = "../out/input.csv"
+#INPUT_CSV = "../out/6KE12posmax.csv"
+
 OUTPUT_CSV = "../out/uniform_120k.csv"
 N = 120000
 X_MIN = 243.53396107975615984
