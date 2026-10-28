@@ -47,10 +47,19 @@ def load_csv_smart(path):
         x, c = data[:,1], data[:,2]
     return x, c
 
+def test_data():
+    path =   "../out/test_output.csv"
+
+    _, y_test = load_csv_smart(path)
+
+    print(f"First 3 rows:")
+    print(y_test[:3])
+    print(f"Last 3 rows:")
+    print(y_test[-3:])
+
 print(f"Loading {INPUT_CSV}...")
 x_phys, c_real = load_csv_smart(INPUT_CSV)
-print(f"First 3 rows:")
-print(c_real[:3])
+test_data()
 
 print(f"Original: M={len(x_phys)} c=[{c_real.min():.2f},{c_real.max():.2f}]")
 
