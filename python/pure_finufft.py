@@ -120,5 +120,6 @@ print(f"FINUFFT done: u min max=[{u_uniform.min():.3f},{u_uniform.max():.3f}] \
       )
 
 # Save
-np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_uniform)), delimiter=',', header='x_uniform,c_uniform', comments='')
+np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_uniform)), \
+          fmt="%.6f", delimiter=',', header='x_uniform,c_uniform', comments='')
 print(f"Saved {OUTPUT_CSV} N={N} dx={L/N:.6f}")
