@@ -31,7 +31,7 @@ X_MIN = X_MIN_ORIG
 X_MAX = X_MAX_ORIG
 L = X_MAX - X_MIN  # = N * DX_FIXED = 14615.94
 
-PAD_INTERVALS = 10  # 10 intervals each side, padded with zeros
+PAD_INTERVALS = 0  # 10 intervals each side, padded with zeros
 EPS = 1e-9
 EXTREME_METHOD = "iqr"
 IQR_FACTOR = 3.0
@@ -107,7 +107,10 @@ u_padded = (np.fft.ifft(f_fft) * N_PADDED / (2*np.pi)).real
 print(f"FINUFFT padded done: u_padded=[{u_padded.min():.3f},{u_padded.max():.3f}]")
 
 # Extract interior (remove padding)
-u_interior = u_padded[PAD:-PAD]  # 120000 points from X_MIN to X_MAX
+if PAD == 0:
+   u_interior = u_padded  # 120000 points from X_MIN to X_MAX
+else:
+   u_interior = u_padded[PAD:-PAD]  # 120000 points from X_MIN to X_MAX
 
 print(f"Interior (after removing padding): u=[{u_interior.min():.3f},{u_interior.max():.3f}]")
 
