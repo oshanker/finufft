@@ -16,7 +16,7 @@ Requires: pip install finufft
 import numpy as np
 import sys
 
-INPUT_CSV = "../out/6KE12posmax.csv"
+INPUT_CSV = "../out/input.csv"
 OUTPUT_CSV = "../out/uniform_120k_padded.csv"
 OUTPUT_CSV_PADDED = "../out/uniform_120020_padded_full.csv"
 
@@ -49,9 +49,9 @@ def load_csv_smart(path):
 
 print(f"Loading {INPUT_CSV}...")
 x_phys, c_real = load_csv_smart(INPUT_CSV)
-idx = np.argsort(x_phys)
-x_phys = x_phys[idx]
-c_real = c_real[idx]
+print(f"First 3 rows:")
+print(c_real[:3])
+
 print(f"Original: M={len(x_phys)} c=[{c_real.min():.2f},{c_real.max():.2f}]")
 
 # Drop extremes via IQR (no fixed threshold)
@@ -112,9 +112,14 @@ u_interior = u_padded[PAD:-PAD]  # 120000 points from X_MIN to X_MAX
 print(f"Interior (after removing padding): u=[{u_interior.min():.3f},{u_interior.max():.3f}]")
 
 # Save both
-np.savetxt(OUTPUT_CSV_PADDED, np.column_stack((X_uniform_padded, u_padded)), delimiter=',', header='x_uniform_padded,c_uniform', comments='')
+np.savetxt(OUTPUT_CSV_PADDED, np.column_stack((X_uniform_padded, u_padded)), \
+         fmt= "%.6f",   delimiter=',', header='x_uniform_padded,c_uniform', comments='')
 print(f"Saved padded full (with zeros): {OUTPUT_CSV_PADDED} N={N_PADDED}")
 
-np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_interior)), delimiter=',', header='x_uniform,c_uniform', comments='')
+np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_interior)), \
+           fmt= "%.6f", delimiter=',', header='x_uniform,c_uniform', comments='') 
+
+print(f"First 3 rows:")
+print(u_interior[:3])
 print(f"Saved interior: {OUTPUT_CSV} N={N} dx={DX:.12f}")
 print(f"Check: X_MAX - X_MIN = {X_MAX-X_MIN:.6f} = {N} * {DX:.6f}")
