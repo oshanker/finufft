@@ -13,8 +13,8 @@ X_uniform = np.linspace(x_start, x_end, N, endpoint=ENDPOINT)
 # Generate 1,000 evenly spaced points over the specified range
 x = np.linspace(x_start + gincr/3, x_end - gincr/3, 170000)
 def true_signal(x):
-    test_freq = np.sqrt(2)
-    #test_freq = 25
+    #test_freq = np.sqrt(2)
+    test_freq = 25
     ret = np.cos(np.pi * (x - x_start) / gincr) + \
            np.cos(np.pi * (x - x_start) / (2*gincr)) + \
            2*np.cos(np.pi * (x - x_start) / (test_freq*gincr)) + \
