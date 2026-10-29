@@ -18,6 +18,7 @@ def true_signal(x):
     ret = np.cos(np.pi * (x - x_start) / gincr) + \
            np.cos(np.pi * (x - x_start) / (2*gincr)) + \
            2*np.cos(np.pi * (x - x_start) / (test_freq*gincr)) + \
+           2*np.cos(np.pi * (x - x_start) / (3000*gincr)) + \
            np.cos(np.pi * (x - x_start) / (3*gincr))
     return ret
 
