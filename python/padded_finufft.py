@@ -114,6 +114,23 @@ c_weighted = (c_filt * w_scaled).astype(np.complex128)
 f_centered = finufft.nufft1d1(x_scaled.astype(np.float64), c_weighted, n_modes=N_PADDED, eps=EPS, isign=1)
 f_fft = np.fft.ifftshift(f_centered)
 u_padded = (np.fft.ifft(f_fft) * N_PADDED / (2*np.pi)).real
+# The standard FFT grid over [-pi, pi) matching the layout of np.fft.ifft
+x_out_values = np.fft.fftfreq(N_PADDED) * (2 * np.pi)
+# Add 2*pi only to the negative values x_monotonic out of sunc with u_paddded
+x_monotonic = np.where(x_out_values < 0, x_out_values + 2 * np.pi, x_out_values) \
+              *(L_PADDED/(2*np.pi))
+print(f"x_monotonic First  rows:")
+print(x_monotonic[:4])
+print(f"x_monotonic Last  rows:")
+print(x_monotonic[-4:])
+print(f" x_monotonic=[{x_monotonic.min():.3f},{x_monotonic.max():.3f}]")
+sort_idx = np.argsort(x_monotonic)
+x_plot = x_monotonic[sort_idx] + (X_MIN_PADDED + 2 *DX)
+u_plot = u_padded[sort_idx]
+np.savetxt(OUTPUT_CSV_PADDED, np.column_stack((X_uniform_padded, u_padded)), \
+         fmt= "%.6f",   delimiter=',', header='X_uniform_padded,u_padded', \
+           comments='')
+print(f"Saved padded full (with zeros): {OUTPUT_CSV_PADDED} N={N_PADDED}")
 
 print(f"FINUFFT padded done: u_padded=[{u_padded.min():.3f},{u_padded.max():.3f}]")
 
@@ -127,10 +144,6 @@ print(f"Interior (after removing padding): \
   u=[{u_interior.min():.3f},{u_interior.max():.3f}]")
 
 # Save both
-np.savetxt(OUTPUT_CSV_PADDED, np.column_stack((X_uniform_padded, u_padded)), \
-         fmt= "%.6f",   delimiter=',', header='x_uniform_padded,c_uniform', \
-           comments='')
-print(f"Saved padded full (with zeros): {OUTPUT_CSV_PADDED} N={N_PADDED}")
 
 np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_interior)), \
            fmt= "%.6f", delimiter=',', header='x_uniform,c_uniform', comments='') 
