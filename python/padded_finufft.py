@@ -52,10 +52,10 @@ def test_data():
 
     _, y_test = load_csv_smart(path)
 
-    print(f"First 3 rows:")
-    print(y_test[:3])
-    print(f"Last 3 rows:")
-    print(y_test[-3:])
+    print(f"y_test First  rows:")
+    print(y_test[:4])
+    print(f"y_test Last  rows:")
+    print(y_test[-4:])
 
 print(f"Loading {INPUT_CSV}...")
 x_phys, c_real = load_csv_smart(INPUT_CSV)
@@ -87,8 +87,9 @@ X_MAX_PADDED = X_MAX + PAD*DX
 print(f"Padded: {PAD} intervals each side with zeros")
 print(f"Padded domain: [{X_MIN_PADDED:.3f}, {X_MAX_PADDED:.3f}) L_padded={L_PADDED:.3f} N_padded={N_PADDED}")
 
-X_uniform_padded = np.linspace(X_MIN_PADDED, X_MAX_PADDED, N_PADDED, endpoint=False)
-X_uniform = np.linspace(X_MIN, X_MAX, N, endpoint=False)
+endpoint=True
+X_uniform_padded = np.linspace(X_MIN_PADDED, X_MAX_PADDED, N_PADDED, endpoint=endpoint)
+X_uniform = np.linspace(X_MIN, X_MAX, N, endpoint=endpoint)
 
 # --- FINUFFT on padded domain (handles periodicity) ---
 print("Running FINUFFT Type1 on padded domain (no Tukey)...")
@@ -131,9 +132,9 @@ print(f"Saved padded full (with zeros): {OUTPUT_CSV_PADDED} N={N_PADDED}")
 np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_interior)), \
            fmt= "%.6f", delimiter=',', header='x_uniform,c_uniform', comments='') 
 
-print(f"First 3 rows:")
-print(u_interior[:3])
-print(f"Last 3 rows:")
-print(u_interior[-3:])
+print(f"u_padded First  rows:")
+print(u_padded[:4])
+print(f"u_padded Last  rows:")
+print(u_padded[-4:])
 print(f"Saved interior: {OUTPUT_CSV} N={N} dx={DX:.12f}")
 print(f"Check: X_MAX - X_MIN = {X_MAX-X_MIN:.6f} = {N} * {DX:.6f}")
