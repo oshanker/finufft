@@ -31,7 +31,7 @@ X_MIN = X_MIN_ORIG
 X_MAX = X_MAX_ORIG
 L = X_MAX - X_MIN  # = N * DX_FIXED = 14615.94
 
-PAD_INTERVALS = 1  # 10 intervals each side, padded with zeros
+PAD_INTERVALS = 2  # 10 intervals each side, padded with zeros
 EPS = 1e-9
 EXTREME_METHOD = "iqr"
 IQR_FACTOR = 3.0
@@ -56,6 +56,7 @@ def test_data():
     print(y_test[:4])
     print(f"y_test Last  rows:")
     print(y_test[-4:])
+    print(f" y_test=[{y_test.min():.3f},{y_test.max():.3f}]")
 
 print(f"Loading {INPUT_CSV}...")
 x_phys, c_real = load_csv_smart(INPUT_CSV)
@@ -122,11 +123,13 @@ if PAD == 0:
 else:
    u_interior = u_padded[PAD:-PAD]  # 120000 points from X_MIN to X_MAX
 
-print(f"Interior (after removing padding): u=[{u_interior.min():.3f},{u_interior.max():.3f}]")
+print(f"Interior (after removing padding): \
+  u=[{u_interior.min():.3f},{u_interior.max():.3f}]")
 
 # Save both
 np.savetxt(OUTPUT_CSV_PADDED, np.column_stack((X_uniform_padded, u_padded)), \
-         fmt= "%.6f",   delimiter=',', header='x_uniform_padded,c_uniform', comments='')
+         fmt= "%.6f",   delimiter=',', header='x_uniform_padded,c_uniform', \
+           comments='')
 print(f"Saved padded full (with zeros): {OUTPUT_CSV_PADDED} N={N_PADDED}")
 
 np.savetxt(OUTPUT_CSV, np.column_stack((X_uniform, u_interior)), \
