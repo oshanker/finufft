@@ -12,7 +12,7 @@ x_scattered = np.random.uniform(-np.pi, np.pi, size=N)
 
 # True complex signal + some random white noise
 true_signal = np.sin(x_scattered) + 0.5 * np.cos(5 * x_scattered)
-y_scattered = (true_signal + np.random.normal(0, 0.1, size=N)).astype(
+y_scattered = (true_signal ).astype(
     np.complex128
 )
 
