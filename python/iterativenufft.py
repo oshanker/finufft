@@ -1,10 +1,11 @@
 import finufft
 import numpy as np
+import time
 from scipy.sparse.linalg import cg, LinearOperator
 
 # 1. Setup exact problem sizes (N = 120,000 points, K = 120,000 target modes)
-N = 120000
-K_modes = 120000  # Total frequency terms
+N = 1200000
+K_modes = 1200000  # Total frequency terms
 
 # Generate dummy scattered data scaled to [-pi, pi] for NUFFT compatibility
 np.random.seed(42)
@@ -37,6 +38,9 @@ def normal_equation_matvec(coeffs):
   # Adjoint projection back to Fourier space
   return adjoint_nufft(fwd)
 
+# Record the start time
+start_time = time.perf_counter()
+
 
 # Create the structural linear operator mapping Fourier Space -> Fourier Space
 A_matrix_operator = LinearOperator(
@@ -50,12 +54,17 @@ b_vector = adjoint_nufft(y_scattered)
 print("Starting Iterative Conjugate Gradient solver...")
 # 'tol' controls precision, 'maxiter' keeps execution time bounded
 fourier_coefficients, info = cg(A_matrix_operator, b_vector, \
-                                rtol=1e-6, maxiter=1000)
+                                rtol=1e-6, maxiter=1500)
 
 if info == 0:
   print("Convergence successful!")
 else:
   print(f"Solver stopped. Info code: {info} (Max iterations reached or stalled)")
+
+end_time = time.perf_counter()
+
+execution_time = end_time - start_time
+print(f"Execution time: {execution_time:.6f} seconds")
 
 # 5. Result Verification
 # Reconstruct the fitted signal at our original scattered positions to verify accuracy
