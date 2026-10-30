@@ -50,7 +50,7 @@ b_vector = adjoint_nufft(y_scattered)
 print("Starting Iterative Conjugate Gradient solver...")
 # 'tol' controls precision, 'maxiter' keeps execution time bounded
 fourier_coefficients, info = cg(A_matrix_operator, b_vector, \
-                                rtol=1e-5, maxiter=1000)
+                                rtol=1e-6, maxiter=1000)
 
 if info == 0:
   print("Convergence successful!")
@@ -66,4 +66,19 @@ residual_norm = np.linalg.norm(y_scattered - fitted_y_scattered) / np.linalg.nor
 print(f"Relative Least-Squares Error: {residual_norm:.5f}")
 mad = np.mean(np.abs((y_scattered - fitted_y_scattered)))
 print(f"Mean Absolute Deviation: {mad}")
+# 1. Generate the uniform x-coordinate grid matching your domain
+# We use endpoint=False because periodic grids wrap around \
+# (the point at +pi is identical to -pi)
+x_grid = np.linspace(-np.pi, np.pi, num=K_modes, endpoint=False)
+
+# 2. Transform the Fourier coefficients into physical y-values on that grid
+# (Using the IFFT method shown previously)
+y_grid_complex = np.fft.ifft(np.fft.ifftshift(fourier_coefficients)) * K_modes
+
+# 3. Extract the real part (since your physical function values are real)
+y_grid = y_grid_complex.real
+
+# Now you have perfect pairs: (x_grid[i], y_grid[i])
+print("First 5 grid coordinates (x):", x_grid[:5])
+print("First 5 fitted grid values (y):", y_grid[:5])
 
