@@ -50,7 +50,7 @@ b_vector = adjoint_nufft(y_scattered)
 print("Starting Iterative Conjugate Gradient solver...")
 # 'tol' controls precision, 'maxiter' keeps execution time bounded
 fourier_coefficients, info = cg(A_matrix_operator, b_vector, \
-                                rtol=1e-5, maxiter=300)
+                                rtol=1e-5, maxiter=1000)
 
 if info == 0:
   print("Convergence successful!")
