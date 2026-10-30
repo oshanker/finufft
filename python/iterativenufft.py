@@ -1,0 +1,69 @@
+import finufft
+import numpy as np
+from scipy.sparse.linalg import cg, LinearOperator
+
+# 1. Setup exact problem sizes (N = 120,000 points, K = 120,000 target modes)
+N = 120000
+K_modes = 120000  # Total frequency terms
+
+# Generate dummy scattered data scaled to [-pi, pi] for NUFFT compatibility
+np.random.seed(42)
+x_scattered = np.random.uniform(-np.pi, np.pi, size=N)
+
+# True complex signal + some random white noise
+true_signal = np.sin(x_scattered) + 0.5 * np.cos(5 * x_scattered)
+y_scattered = (true_signal + np.random.normal(0, 0.1, size=N)).astype(
+    np.complex128
+)
+
+
+# 2. Define the Implicit Forward and Adjoint Operators
+# Forward operation: Given complex Fourier coefficients, evaluate at scattered points x (NUFFT Type 2)
+def forward_nufft(coeffs):
+  # finufft expects the input coefficients to match the number of modes
+  return finufft.nufft1d2(x_scattered, coeffs)
+
+
+# Adjoint operation: Map errors from scattered space back to frequency space (NUFFT Type 1)
+def adjoint_nufft(grid_values):
+  return finufft.nufft1d1(x_scattered, grid_values, K_modes)
+
+
+# 3. Wrap into a Scipy LinearOperator for Conjugate Gradient (Least-Squares equivalent)
+# The normal equations we want to solve iteratively: (A^H * A) * c = A^H * y
+def normal_equation_matvec(coeffs):
+  # Forward projection to scattered space
+  fwd = forward_nufft(coeffs)
+  # Adjoint projection back to Fourier space
+  return adjoint_nufft(fwd)
+
+
+# Create the structural linear operator mapping Fourier Space -> Fourier Space
+A_matrix_operator = LinearOperator(
+    shape=(K_modes, K_modes), matvec=normal_equation_matvec, dtype=np.complex128
+)
+
+# Compute the Right-Hand Side vector for the normal equations: b = A^H * y
+b_vector = adjoint_nufft(y_scattered)
+
+# 4. Iteratively solve for the Fourier coefficients
+print("Starting Iterative Conjugate Gradient solver...")
+# 'tol' controls precision, 'maxiter' keeps execution time bounded
+fourier_coefficients, info = cg(A_matrix_operator, b_vector, \
+                                rtol=1e-5, maxiter=300)
+
+if info == 0:
+  print("Convergence successful!")
+else:
+  print(f"Solver stopped. Info code: {info} (Max iterations reached or stalled)")
+
+# 5. Result Verification
+# Reconstruct the fitted signal at our original scattered positions to verify accuracy
+fitted_y_scattered = forward_nufft(fourier_coefficients)
+residual_norm = np.linalg.norm(y_scattered - fitted_y_scattered) / np.linalg.norm(
+    y_scattered
+)
+print(f"Relative Least-Squares Error: {residual_norm:.5f}")
+mad = np.mean(np.abs((y_scattered - fitted_y_scattered)))
+print(f"Mean Absolute Deviation: {mad}")
+
