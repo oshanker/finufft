@@ -4,14 +4,16 @@
 # Barnett 8/13/25 for Kaya Unalmis.
 import numpy as np
 import finufft as fi
+from tabulatecos import true_signal  as fun
 
-N = 5  # num samples
+N = 120000  # num samples
 # a generic real test fun  with bandlimit <= (N-1)/2 so interp exact...
-fun = lambda t: 1.0 + np.sin(t + 1) + np.sin(2 * t - 2)  # bandlimit is 2
+#fun = lambda t: 1.0 + np.sin(t + 1) + np.sin(2 * t - 2)  # bandlimit is 2
 Nt = 100  # test targs
 targs = np.random.rand(Nt) * 2 * np.pi
-Nf = N // 2 + 1  # num freq outputs for rfft; note rfft2 seems different :(
+Nf = N // 2  + 1 # num freq outputs for rfft; note rfft2 seems different :(
 g = np.linspace(0, 2 * np.pi, N, endpoint=False)  # sample grid
+#f = fun(g)
 f = fun(g)
 c = (1 / N) * np.fft.rfft(f)  # gets coeffs 0,1,..Nf-1  (don't forget prefac)
 assert c.size == Nf
@@ -24,3 +26,5 @@ ftp = fi.nufft1d2(targs, c, eps=1e-12, isign=1)  # f at targs but with phase err
 # the key step: rephase (to account for shift), only then take Re (needed!)...
 ft = np.real(ftp * (np.cos(N0 * targs) + 1j * np.sin(N0 * targs)))  # guess 1j sign
 print("unpadded 1d2 max err:", np.linalg.norm(fun(targs) - ft, np.inf))
+mad = np.mean(np.abs(fun(targs) - ft))
+print(f"Mean Absolute Deviation: {mad}")
